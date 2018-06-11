@@ -1,3 +1,17 @@
+<?php
+	ob_start();
+	session_start();
+	require_once 'dbconnect.php';
+
+	// if session is not set this will redirect to login page
+	if( !isset($_SESSION['user']) ) {
+		header("Location: index.php");
+		exit;
+	}
+	// select loggedin users detail
+	$res=mysql_query("SELECT * FROM users WHERE userId=".$_SESSION['user']);
+	$userRow=mysql_fetch_array($res);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,6 +35,8 @@
       <br>
       <button type="button" class="btn btn-primary btn-lg" onclick="newElement()">ADD TASK</button>
     </div>
+
+
     <ul class="list-group" id="myUL">
 
     </ul>
@@ -46,6 +62,24 @@ list.addEventListener('click', function(ev) {
   }
 }, false); */
 
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "todolist"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  //Select all customers and return the result object:
+  con.query("SELECT task FROM tasks WHERE userId='1'", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+  });
+});
+
 // Create a new list item when clicking on the "Add" button
 function newElement() {
   var inputValue = document.getElementById("myInput").value;
@@ -66,3 +100,4 @@ function newElement() {
 
 </body>
 </html>
+<?php ob_end_flush(); ?>
